@@ -24,12 +24,8 @@ void spm(int j, int site_num, int tot_site_num, int &mat_nonzero_elements);
 void smp(int j, int site_num, int tot_site_num, int &mat_nonzero_elements);
 void szz(int j, int site_num, int tot_site_num, int &mat_nonzero_elements);
 /*for the purpose to calculate matrix's non zero elements*/
-void spm(int j, int site_num, int tot_site_num, double *J, int *row, int *col,
-         double *mat_val, int &coo_index);
-void smp(int j, int site_num, int tot_site_num, double *J, int *row, int *col,
-         double *mat_val, int &coo_index);
-void szz(int j, int site_num, int tot_site_num, double *J, int *row, int *col,
-         double *mat_val, int &coo_index);
+void spin_operator(int j, int site_num, int tot_site_num, double *J, int *row,
+                   int *col, double *mat_val, int &coo_index, double &szz);
 
 void sparse_make_hamiltonian(int mat_dim, int tot_site_num,
                              std::string M_H_JsetFile_name,
@@ -37,13 +33,19 @@ void sparse_make_hamiltonian(int mat_dim, int tot_site_num,
                              std::string Boundary_Condition, int *row, int *col,
                              double *mat_val, int &coo_index);
 
-/*dns_lanczos*/
-// void lanczos(int mat_dim, double *H, double *eigen_value,
-//              std::string D_L_OutputFile_name, int precision);
-// int sdz(int n, double err, double *v);
-// void gso(int n, int k, double **u);
+/*SPARSE LANCZOS*/
+void sparse_lanczos(int mat_dim, int mat_elements, int *row, int *col,
+                    double *mat_val, double *eigen_value, double *eigen_vec,
+                    std::string S_L_Outpufile_name);
+void sdz(int mat_dim, double err, double *vec);
+void gso(int n, int k, double **u);
+void sparse_dgemv(int mat_dim, int mat_elements, double *v, int *row, int *col,
+                  double *mat_val, double *u);
+void ground_eigenvec(int mat_dim, int count, double err,
+                     double groundstate_eigen_value, double *alpha,
+                     double *beta, double **u, double *eigen_vec);
 
-/*m_hとdns_lanczosに共通な関数*/
+/*共通な関数*/
 void vec_init(int n, double *vec);
 void vec_init(int n, int *vec);
 

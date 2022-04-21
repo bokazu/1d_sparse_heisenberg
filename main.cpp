@@ -17,11 +17,11 @@ int main()
     }
 
     string M_H_OutputFile_name, M_H_JsetFile_name, Boundary_Condition,
-        D_L_OutputFile_name;
+        S_L_OutputFile_name;
 
     int tot_site_num, precision;
     get_data(if_M_H_Settingfile, tot_site_num, M_H_OutputFile_name,
-             M_H_JsetFile_name, D_L_OutputFile_name, Boundary_Condition,
+             M_H_JsetFile_name, S_L_OutputFile_name, Boundary_Condition,
              precision);
 
     std::cout << "/************************************************************"
@@ -32,7 +32,7 @@ int main()
     std::cout << "tot_site_num        = " << tot_site_num << endl;
     std::cout << "M_H_OutputFile_name = " << M_H_OutputFile_name << endl;
     std::cout << "M_H_JsetFile_name   = " << M_H_JsetFile_name << endl;
-    std::cout << "D_L_OutputFile_name = " << D_L_OutputFile_name << endl;
+    std::cout << "D_L_OutputFile_name = " << S_L_OutputFile_name << endl;
     std::cout << "Boundary Condition  = " << Boundary_Condition << endl;
     std::cout << "precision           = " << precision << endl;
     std::cout << "/************************************************************"
@@ -47,13 +47,19 @@ int main()
     mat_elements = sparse_count_mat_elements(
         mat_dim, tot_site_num, M_H_JsetFile_name, Boundary_Condition);
     cout << "mat_elements = " << mat_elements << endl;
+    /*Hamiltonian with COO format*/
     int *row = new int[mat_elements];
     int *col = new int[mat_elements];
     double *mat_val = new double[mat_elements];
-
     vec_init(mat_elements, row);
     vec_init(mat_elements, col);
     vec_init(mat_elements, mat_val);
+
+    /*Arrays of eigen value and vector*/
+    double *eigen_value = new double[mat_dim];
+    double *eigen_vec = new double[mat_dim];
+    vec_init(mat_dim, eigen_value);
+    vec_init(mat_dim, eigen_vec);
 
     int coo_index = 0;  // row,col,mat_valの要素指定用のindex
 
@@ -77,6 +83,9 @@ int main()
              << scientific << setprecision(precision) << left << mat_val[i]
              << endl;
     }
+
+    sparse_lanczos(mat_dim, mat_elements, row, col, mat_val, eigen_value,
+                   eigen_vec, S_L_OutputFile_name);
 
     delete[] row;
     delete[] col;
