@@ -1,6 +1,6 @@
-3
-./sample/i_heisen_3site_b.txt
+4
+./sample/i_heisen_4site_b.txt
 ./model_set/j_set.txt
-./output/r_heisen_3site_b.txt
+./output/r_heisen_4site_b.txt
 y
 5

@@ -43,9 +43,48 @@ int main()
     /*******************************************************************************************************************************/
     int mat_dim = 1 << tot_site_num;
 
+    /*************************Setting
+     * J***************************************************************************/
+    int bond_num;
+    ifstream if_M_H_JsetFile(M_H_JsetFile_name);
+    if (!(if_M_H_JsetFile))
+    {
+        cerr << "Could not open the file - '" << M_H_JsetFile_name << "'"
+             << endl;
+    }
+    if (Boundary_Condition == "y")
+    {
+        bond_num = tot_site_num;
+    }
+    else
+    {
+        bond_num = tot_site_num - 1;
+    }
+
+    double *J = new double[bond_num];
+    cout << "/************************************Jset*************************"
+            "*****/"
+         << endl;
+    std::cout << "i"
+              << "  "
+              << "i+1"
+              << ":  "
+              << " J[i]      " << endl;
+    for (int i = 0; i < bond_num; i++)
+    {
+        J[i] = 0.;
+        if_M_H_JsetFile >> J[i];
+        std::cout << i << "   " << i + 1 << "  :  " << J[i] << endl;
+    }
+    cout << "/*****************************************************************"
+            "**"
+            "*****/"
+         << endl;
+    if_M_H_JsetFile.close();
+    /****************************************************************************************/
     int mat_elements = 0;
     mat_elements = sparse_count_mat_elements(
-        mat_dim, tot_site_num, M_H_JsetFile_name, Boundary_Condition);
+        mat_dim, tot_site_num, M_H_JsetFile_name, Boundary_Condition, J);
     cout << "mat_elements = " << mat_elements << endl;
     /*Hamiltonian with COO format*/
     int *row = new int[mat_elements];
@@ -63,9 +102,9 @@ int main()
 
     int coo_index = 0;  // row,col,mat_valの要素指定用のindex
 
-    sparse_make_hamiltonian(mat_dim, tot_site_num, M_H_JsetFile_name,
-                            M_H_OutputFile_name, precision, Boundary_Condition,
-                            row, col, mat_val, coo_index);
+    sparse_make_hamiltonian(mat_dim, tot_site_num, M_H_OutputFile_name,
+                            precision, Boundary_Condition, J, row, col, mat_val,
+                            coo_index);
 
     cout << "/********************************MATRIX INFO WITH COO "
             "FORMAT************************************************/"
@@ -90,4 +129,6 @@ int main()
     delete[] row;
     delete[] col;
     delete[] mat_val;
+    delete[] eigen_value;
+    delete[] eigen_vec;
 }

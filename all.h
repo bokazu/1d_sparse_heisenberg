@@ -14,7 +14,7 @@
 /*make_hamiltonian*/
 int sparse_count_mat_elements(int mat_dim, int tot_site_num,
                               std::string M_H_JsetFile_name,
-                              std::string Boundary_Condition);
+                              std::string Boundary_Condition, double *J);
 void get_data(std::ifstream &M_H_Settingfile, int &tot_site_num,
               std::string &M_H_OutputFile_name, std::string &M_H_JsetFile_name,
               std::string &D_L_OutputFile_name, std::string &Boundary_Condition,
@@ -26,12 +26,14 @@ void szz(int j, int site_num, int tot_site_num, int &mat_nonzero_elements);
 /*for the purpose to calculate matrix's non zero elements*/
 void spin_operator(int j, int site_num, int tot_site_num, double *J, int *row,
                    int *col, double *mat_val, int &coo_index, double &szz);
+void spin_operator(int j, int site_num, int tot_site_num, double *J,
+                   double &szz, int &mat_nonzero_elements);
 
 void sparse_make_hamiltonian(int mat_dim, int tot_site_num,
-                             std::string M_H_JsetFile_name,
                              std::string M_H_OutputFile_name, int precision,
-                             std::string Boundary_Condition, int *row, int *col,
-                             double *mat_val, int &coo_index);
+                             std::string Boundary_Condition, double *J,
+                             int *row, int *col, double *mat_val,
+                             int &coo_index);
 
 /*SPARSE LANCZOS*/
 void sparse_lanczos(int mat_dim, int mat_elements, int *row, int *col,
@@ -41,6 +43,10 @@ void sdz(int mat_dim, double err, double *vec);
 void gso(int n, int k, double **u);
 void sparse_dgemv(int mat_dim, int mat_elements, double *v, int *row, int *col,
                   double *mat_val, double *u);
+void ground_state_eigenvec(int mat_dim, int count,
+                           double groundstate_eigen_value,
+                           double *tri_diag_eigen_vec, double **u,
+                           double *eigen_vec, double err);
 void ground_eigenvec(int mat_dim, int count, double err,
                      double groundstate_eigen_value, double *alpha,
                      double *beta, double **u, double *eigen_vec);
@@ -237,8 +243,8 @@ void print_tri_diag_vec(int mat_dim, int precision, T *diag, T *sub_diag)
         {
             std::cout << std::setw(7) << std::scientific
                       << std::setprecision(precision) << std::left
-                      << sub_diag[i] << "  " << diag[i] << "  " << sub_diag[i]
-                      << "  ";
+                      << sub_diag[i - 1] << "  " << diag[i] << "  "
+                      << sub_diag[i] << "  ";
         }
         for (int k = i + 2; k < mat_dim; k++)
         {
