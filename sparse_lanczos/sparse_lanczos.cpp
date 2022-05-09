@@ -63,6 +63,7 @@ void sparse_lanczos(int mat_dim, int mat_elements, int *row, int *col,
 
     for (int k = 0; k < mat_dim; k++)
     {
+        if (k > 0) count++;
         vec_init(mat_dim, v);
         if (err_checker)
         {
@@ -113,6 +114,7 @@ void sparse_lanczos(int mat_dim, int mat_elements, int *row, int *col,
                                   tri_diag_eigen_vec, k + 2);
                     cblas_dcopy(mat_dim, diag, 1, eigen_value_even, 1);
                 }
+                cout << "eigen value even[0] = " << eigen_value_even[0] << endl;
             }
             else
             {
@@ -128,6 +130,8 @@ void sparse_lanczos(int mat_dim, int mat_elements, int *row, int *col,
                                   tri_diag_eigen_vec, k + 2);
                     cblas_dcopy(mat_dim, diag, 1, eigen_value_odd, 1);
                 }
+                cout << setprecision(16)
+                     << "eigen value odd[0] = " << eigen_value_odd[0] << endl;
             }
             // check erros of k & k+1's eigenvalue of groundstate
             if (k > 0)
@@ -146,7 +150,6 @@ void sparse_lanczos(int mat_dim, int mat_elements, int *row, int *col,
         }
         else
         {
-            count = k;
             break;
         }
     }
@@ -159,6 +162,8 @@ void sparse_lanczos(int mat_dim, int mat_elements, int *row, int *col,
     {
         cblas_dcopy(mat_dim, eigen_value_odd, 1, eigen_value, 1);
     }
+
+    cout << "ground state eigenvalue = " << eigen_value[0] << endl;
     /*Calculate ground state of eigen vector*/
     if (count == mat_dim - 1)
     {
